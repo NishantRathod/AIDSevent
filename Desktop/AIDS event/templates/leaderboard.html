@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - KnowledgeShare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .leaderboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .leader-item {
+            display: grid;
+            grid-template-columns: 60px 1fr auto auto auto;
+            gap: 20px;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .leader-item:last-child {
+            border-bottom: none;
+        }
+        
+        .leader-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+        
+        .rank {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        
+        .rank-1 { color: #FFD700; }
+        .rank-2 { color: #C0C0C0; }
+        .rank-3 { color: #CD7F32; }
+        
+        .medal {
+            font-size: 2.5rem;
+        }
+        
+        .leader-info h3 {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .leader-stats {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 2px;
+        }
+        
+        .token-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .leader-item {
+                grid-template-columns: 40px 1fr;
+                gap: 10px;
+            }
+            
+            .stat-box {
+                grid-column: 2;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard" class="logo">📚 KnowledgeShare</a>
+            <div class="nav-links">
+                <a href="/dashboard">Dashboard</a>
+                <a href="/upload">Upload</a>
+                <a href="/pdfs">Browse PDFs</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🏆 Leaderboard</h1>
+            <p>Top contributors in the community</p>
+        </div>
+        
+        <div class="leaderboard-card">
+            {% for leader in leaders %}
+                <div class="leader-item">
+                    <div class="rank {% if loop.index <= 3 %}rank-{{ loop.index }}{% endif %}">
+                        {% if loop.index == 1 %}
+                            <span class="medal">🥇</span>
+                        {% elif loop.index == 2 %}
+                            <span class="medal">🥈</span>
+                        {% elif loop.index == 3 %}
+                            <span class="medal">🥉</span>
+                        {% else %}
+                            #{{ loop.index }}
+                        {% endif %}
+                    </div>
+                    
+                    <div class="leader-info">
+                        <h3>{{ leader[0] }}</h3>
+                        <div class="leader-stats">
+                            {{ leader[2] }} uploads • {{ leader[3] }} total views
+                        </div>
+                    </div>
+                    
+                    <div class="stat-box">
+                        <div class="stat-value">{{ leader[2] }}</div>
+                        <div class="stat-label">Uploads</div>
+                    </div>
+                    
+                    <div class="stat-box">
+                        <div class="stat-value">{{ leader[3] }}</div>
+                        <div class="stat-label">Views</div>
+                    </div>
+                    
+                    <div class="token-display">
+                        {{ leader[1] }} 🪙
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
