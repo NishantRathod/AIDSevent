@@ -10,9 +10,12 @@ UPLOAD_FOLDER = "uploads/pdfs"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def get_db():
-    return sqlite3.connect("database.db")
+    con = sqlite3.connect("database.db", timeout=10)
+    con.execute("PRAGMA journal_mode=WAL")
+    return con
 
 def init_db():
+    
     with get_db() as con:
         cur = con.cursor()
         cur.execute("""CREATE TABLE IF NOT EXISTS users(
